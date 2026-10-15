@@ -22,11 +22,16 @@ function testPageDetection() {
   assert.strictEqual(type1, 'PAGE1', 'Should correctly identify Page 1 (Login page)');
   console.log('✓ Page 1 successfully detected');
 
-  // Page 2
+  // Page 2 (Must be PAGE2 even when input has name="otp")
   const doc2 = parseHTML(page2Html);
   const type2 = ContineoAdapter.detectPageType(doc2);
-  assert.strictEqual(type2, 'PAGE2', 'Should correctly identify Page 2 (ID Card page)');
-  console.log('✓ Page 2 successfully detected');
+  assert.strictEqual(type2, 'PAGE2', 'Should correctly identify Page 2 (ID Card page even if input is named otp)');
+  console.log('✓ Page 2 successfully detected without false-positive OTP');
+
+  // Verify that Page 2 is NOT considered a security challenge
+  const chal2 = ContineoAdapter.checkForSecurityChallenge(doc2);
+  assert.strictEqual(chal2.isChallenge, false, 'Page 2 must NOT be flagged as security challenge');
+  console.log('✓ Page 2 confirmed NOT a security challenge');
 
   // Page 3 (Success)
   const doc3 = parseHTML(page3Html);
@@ -91,11 +96,11 @@ function testPage2Automation() {
   console.log('\nTesting Page 2 Automation (ID Card Number Fill + Submit)...');
   const doc = parseHTML(page2Html);
 
-  // 1. Find ID Card Input
+  // 1. Find ID Card Input (matches input even if named 'otp')
   const idInput = ContineoAdapter.findIdCardInput(doc);
   assert(idInput, 'Must locate ID card input on Page 2');
-  assert.strictEqual(idInput.id, 'idcard');
-  console.log('✓ Page 2 ID Card input identified');
+  assert.strictEqual(idInput.id, 'otp');
+  console.log('✓ Page 2 ID Card input identified (id: otp)');
 
   // 2. Fill ID Card
   const fillRes = ContineoAdapter.fillIdCardPage(doc, 'IDCARD-98765');
@@ -132,6 +137,7 @@ function testErrorHandling() {
   console.log('\nTesting Security Challenge Detection...');
   const challengeHtml = `
     <html><body>
+      <p>Enter the SMS OTP verification code sent to your registered phone</p>
       <input type="text" name="otp_input" placeholder="Enter OTP code" />
     </body></html>
   `;
@@ -139,7 +145,7 @@ function testErrorHandling() {
   const chalRes = ContineoAdapter.checkForSecurityChallenge(challengeDoc);
   assert.strictEqual(chalRes.isChallenge, true);
   assert.strictEqual(chalRes.type, 'OTP');
-  console.log('✓ Security challenge (OTP) intercepted');
+  console.log('✓ Genuine security challenge (OTP) intercepted');
 }
 
 function run() {

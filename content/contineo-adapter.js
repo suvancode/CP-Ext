@@ -110,13 +110,8 @@
         return 'PAGE1';
       }
 
-      // 2. Check for Security Challenge (reCAPTCHA v2 checkbox challenge or OTP)
-      const challenge = this.checkForSecurityChallenge(doc);
-      if (challenge.isChallenge) {
-        return 'CHALLENGE';
-      }
-
-      // 3. Check for Page 2 (ID Card page)
+      // 2. Check for Page 2 (ID Card page) - Must be checked BEFORE security challenges
+      // because ContinueO internally names the ID card input/task "loginOtp" / "otp"
       const bodyText = doc.body.innerText || doc.body.textContent || '';
       const hasIdCardText = bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT) ||
                             bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT_ALT);
@@ -127,9 +122,15 @@
         return 'PAGE2';
       }
 
-      // 4. Check for Success (Authenticated Portal)
+      // 3. Check for Success (Authenticated Portal)
       if (this.isSuccessPage(doc)) {
         return 'SUCCESS';
+      }
+
+      // 4. Check for genuine Security Challenge (reCAPTCHA v2 checkbox challenge or SMS OTP)
+      const challenge = this.checkForSecurityChallenge(doc);
+      if (challenge.isChallenge) {
+        return 'CHALLENGE';
       }
 
       return 'UNKNOWN';
@@ -211,14 +212,12 @@
      * Checks if manual security challenge (CAPTCHA / OTP) is active.
      */
     checkForSecurityChallenge(doc = document) {
-      if (!doc) return { isChallenge: false, type: null };
+      if (!doc || !doc.body) return { isChallenge: false, type: null };
 
-      // Check for OTP inputs
-      for (const sel of Selectors.CHALLENGES.OTP_PATTERNS) {
-        const el = doc.querySelector(sel);
-        if (el && (el.offsetParent !== null || el.offsetWidth > 0)) {
-          return { isChallenge: true, type: 'OTP' };
-        }
+      // Never treat Page 2 (ID Card page) as a security challenge
+      const bodyText = (doc.body.innerText || doc.body.textContent || '');
+      if (bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT) || bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT_ALT)) {
+        return { isChallenge: false, type: null };
       }
 
       // Check for interactive CAPTCHA challenge iframe (e.g. bframe image puzzle)
@@ -229,6 +228,17 @@
           : null;
         if (style && style.visibility !== 'hidden' && style.opacity !== '0' && captchaFrame.offsetHeight > 50) {
           return { isChallenge: true, type: 'CAPTCHA' };
+        }
+      }
+
+      // Check for genuine OTP challenge (must have both an OTP input AND explicit OTP wording on page)
+      const hasOtpWording = /one[\s-]?time[\s-]?password|enter\s+(?:the\s+)?otp|sms\s+otp|otp\s+sent|verification\s+code/i.test(bodyText);
+      if (hasOtpWording) {
+        for (const sel of Selectors.CHALLENGES.OTP_PATTERNS) {
+          const el = doc.querySelector(sel);
+          if (el && (el.offsetParent !== null || el.offsetWidth > 0)) {
+            return { isChallenge: true, type: 'OTP' };
+          }
         }
       }
 
@@ -379,7 +389,7 @@
         if (ignoredIds.includes(id) || ignoredIds.includes(name)) continue;
 
         const combined = `${id} ${name} ${placeholder}`;
-        if (combined.includes('card') || combined.includes('id') || combined.includes('regno')) {
+        if (combined.includes('card') || combined.includes('id') || combined.includes('regno') || combined.includes('otp')) {
           return inp;
         }
       }

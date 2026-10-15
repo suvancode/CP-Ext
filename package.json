@@ -1,6 +1,6 @@
 {
   "name": "continueo-auto-login-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ContinueO Auto Login Chromium extension for Windows desktop",
   "type": "commonjs",
   "scripts": {

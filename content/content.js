@@ -134,19 +134,7 @@
         return;
       }
 
-      // 2. Check for Security Challenge (interactive CAPTCHA or OTP)
-      const challengeCheck = Adapter.checkForSecurityChallenge(document);
-      if (challengeCheck.isChallenge) {
-        await clearAutoTriggerSession();
-        updateState(
-          Constants.States.MANUAL_INTERVENTION_REQUIRED,
-          `Security check detected (${challengeCheck.type}). Please complete it manually.`
-        );
-        isExecuting = false;
-        return;
-      }
-
-      // 3. Resolve credentials
+      // 2. Resolve credentials
       let creds = passedCredentials;
       if (!creds) {
         const session = await getAutoTriggerSession();
@@ -171,9 +159,21 @@
         return;
       }
 
-      // 4. Detect Current Page
+      // 3. Detect Current Page
       updateState(Constants.States.DETECTING_LOGIN_PAGE, 'Detecting ContinueO page…');
       let pageType = Adapter.detectPageType(document);
+
+      // Handle genuine security challenges (e.g. interactive reCAPTCHA image puzzle)
+      if (pageType === 'CHALLENGE') {
+        const challengeCheck = Adapter.checkForSecurityChallenge(document);
+        await clearAutoTriggerSession();
+        updateState(
+          Constants.States.MANUAL_INTERVENTION_REQUIRED,
+          `Security check detected (${challengeCheck.type || 'CAPTCHA'}). Please complete it manually.`
+        );
+        isExecuting = false;
+        return;
+      }
 
       // Handle Page 1: USN & DOB
       if (pageType === 'PAGE1') {

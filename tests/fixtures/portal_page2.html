@@ -6,17 +6,21 @@
 </head>
 <body>
   <div class="container">
-    <h2>Two-Step Verification</h2>
-    <p>Enter the ID Card Number associated with this account:</p>
-    <form action="index.php" method="POST" id="id-card-form">
-      <div class="input-group">
-        <label for="idcard">ID Card Number</label>
-        <input type="text" name="idcard" id="idcard" placeholder="Enter ID Card Number" autocomplete="off" required>
-      </div>
-      <div class="btn-group">
-        <input type="submit" class="btn" value="SUBMIT">
-      </div>
-    </form>
+    <h2>Welcome to BMSIT&M.</h2>
+    <div class="cn-login-box">
+      <h3>Enter the ID Card Number</h3>
+      <form action="index.php" method="POST" id="id-card-form">
+        <input type="hidden" name="task" value="loginOtp">
+        <div class="input-group">
+          <!-- The portal often names this input 'otp' because of the underlying loginOtp task -->
+          <input type="text" name="otp" id="otp" placeholder="" autocomplete="off" required>
+          <small>(Please enter the ID Card Number)</small>
+        </div>
+        <div class="btn-group">
+          <input type="submit" class="btn" value="SUBMIT">
+        </div>
+      </form>
+    </div>
   </div>
 </body>
 </html>

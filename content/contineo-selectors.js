@@ -36,7 +36,13 @@
         "input[name*='card' i]",
         "input[id*='id' i][id*='card' i]",
         "input[id*='id' i]",
-        "input[id*='card' i]"
+        "input[id*='card' i]",
+        // ContinueO uses Joomla loginOtp task, so the ID card input is often named 'otp'
+        "input[name*='otp' i]",
+        "input[id*='otp' i]",
+        "input[name='login_otp' i]",
+        "input[type='text']:not(#username)",
+        "input[type='password']:not(#passwd)"
       ],
       SUBMIT_BUTTONS: [
         "input[type='submit'][value*='SUBMIT' i]",
