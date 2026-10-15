@@ -137,15 +137,16 @@ function testErrorHandling() {
   console.log('\nTesting Security Challenge Detection...');
   const challengeHtml = `
     <html><body>
-      <p>Enter the SMS OTP verification code sent to your registered phone</p>
-      <input type="text" name="otp_input" placeholder="Enter OTP code" />
+      <iframe src="https://www.google.com/recaptcha/api2/bframe?k=xyz" style="height:100px;"></iframe>
     </body></html>
   `;
   const challengeDoc = parseHTML(challengeHtml);
+  const iframe = challengeDoc.querySelector('iframe');
+  if (iframe) iframe.offsetHeight = 100;
   const chalRes = ContineoAdapter.checkForSecurityChallenge(challengeDoc);
   assert.strictEqual(chalRes.isChallenge, true);
-  assert.strictEqual(chalRes.type, 'OTP');
-  console.log('✓ Genuine security challenge (OTP) intercepted');
+  assert.strictEqual(chalRes.type, 'CAPTCHA');
+  console.log('✓ Interactive CAPTCHA challenge correctly intercepted');
 }
 
 function run() {

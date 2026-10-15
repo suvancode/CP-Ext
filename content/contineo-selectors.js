@@ -28,18 +28,16 @@
       INDICATOR_TEXT: 'Enter the ID Card Number',
       INDICATOR_TEXT_ALT: 'ID Card',
       INPUT_PATTERNS: [
-        "input[placeholder*='id' i][placeholder*='card' i]",
-        "input[placeholder*='id' i]",
-        "input[placeholder*='card' i]",
-        "input[name*='id' i][name*='card' i]",
-        "input[name*='id' i]",
-        "input[name*='card' i]",
-        "input[id*='id' i][id*='card' i]",
-        "input[id*='id' i]",
-        "input[id*='card' i]",
-        // ContinueO uses Joomla loginOtp task, so the ID card input is often named 'otp'
+        "input[name='otp' i]",
+        "input[id='otp' i]",
         "input[name*='otp' i]",
         "input[id*='otp' i]",
+        "input[placeholder*='card' i]",
+        "input[placeholder*='id' i]",
+        "input[name*='card' i]",
+        "input[id*='card' i]",
+        "input[name*='id' i]:not(#username)",
+        "input[id*='id' i]:not(#username)",
         "input[name='login_otp' i]",
         "input[type='text']:not(#username)",
         "input[type='password']:not(#passwd)"
@@ -79,11 +77,6 @@
         'div.g-recaptcha[data-sitekey]',
         'iframe[src*="recaptcha/api2/anchor"]',
         'iframe[src*="recaptcha/api2/bframe"]'
-      ],
-      OTP_PATTERNS: [
-        'input[name*="otp" i]',
-        'input[placeholder*="otp" i]',
-        'input[id*="otp" i]'
       ]
     }
   };

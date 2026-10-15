@@ -104,21 +104,21 @@
       if (!doc || !doc.body) return 'UNKNOWN';
 
       // 1. Check for Page 1 (Username input and day select)
-      const usernameInput = doc.querySelector(Selectors.PAGE1.USERNAME_INPUT);
       const daySelect = doc.querySelector(Selectors.PAGE1.DAY_SELECT);
-      if (usernameInput && daySelect) {
+      const yearSelect = doc.querySelector(Selectors.PAGE1.YEAR_SELECT);
+      if (daySelect && yearSelect) {
         return 'PAGE1';
       }
 
       // 2. Check for Page 2 (ID Card page) - Must be checked BEFORE security challenges
-      // because ContinueO internally names the ID card input/task "loginOtp" / "otp"
-      const bodyText = doc.body.innerText || doc.body.textContent || '';
-      const hasIdCardText = bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT) ||
-                            bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT_ALT);
+      const bodyTextLower = (doc.body.innerText || doc.body.textContent || '').toLowerCase();
+      const hasIdCardText = bodyTextLower.includes('id card') ||
+                            bodyTextLower.includes('enter the id card number') ||
+                            bodyTextLower.includes('please enter the id card number');
 
       const hasIdCardInput = !!this.findIdCardInput(doc);
 
-      if ((hasIdCardText || hasIdCardInput) && !usernameInput) {
+      if (hasIdCardText || (hasIdCardInput && !daySelect)) {
         return 'PAGE2';
       }
 
@@ -127,7 +127,7 @@
         return 'SUCCESS';
       }
 
-      // 4. Check for genuine Security Challenge (reCAPTCHA v2 checkbox challenge or SMS OTP)
+      // 4. Check for genuine Security Challenge (reCAPTCHA v2 checkbox challenge)
       const challenge = this.checkForSecurityChallenge(doc);
       if (challenge.isChallenge) {
         return 'CHALLENGE';
@@ -209,36 +209,28 @@
     },
 
     /**
-     * Checks if manual security challenge (CAPTCHA / OTP) is active.
+     * Checks if manual security challenge (interactive CAPTCHA puzzle) is active.
      */
     checkForSecurityChallenge(doc = document) {
       if (!doc || !doc.body) return { isChallenge: false, type: null };
 
       // Never treat Page 2 (ID Card page) as a security challenge
-      const bodyText = (doc.body.innerText || doc.body.textContent || '');
-      if (bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT) || bodyText.includes(Selectors.PAGE2.INDICATOR_TEXT_ALT)) {
+      const bodyTextLower = (doc.body.innerText || doc.body.textContent || '').toLowerCase();
+      if (bodyTextLower.includes('id card') || bodyTextLower.includes('enter the id card number')) {
         return { isChallenge: false, type: null };
       }
 
-      // Check for interactive CAPTCHA challenge iframe (e.g. bframe image puzzle)
+      // Check for interactive CAPTCHA challenge iframe (e.g. reCAPTCHA bframe image puzzle)
       const captchaFrame = doc.querySelector('iframe[src*="recaptcha/api2/bframe"]');
       if (captchaFrame) {
-        const style = captchaFrame.ownerDocument.defaultView
-          ? captchaFrame.ownerDocument.defaultView.getComputedStyle(captchaFrame)
-          : null;
-        if (style && style.visibility !== 'hidden' && style.opacity !== '0' && captchaFrame.offsetHeight > 50) {
+        const win = doc.defaultView || (typeof window !== 'undefined' ? window : null);
+        const style = (win && typeof win.getComputedStyle === 'function')
+          ? win.getComputedStyle(captchaFrame)
+          : (captchaFrame.style || {});
+        const isHidden = style.visibility === 'hidden' || style.opacity === '0' || style.display === 'none';
+        const hasHeight = captchaFrame.offsetHeight === undefined || captchaFrame.offsetHeight > 50;
+        if (!isHidden && hasHeight) {
           return { isChallenge: true, type: 'CAPTCHA' };
-        }
-      }
-
-      // Check for genuine OTP challenge (must have both an OTP input AND explicit OTP wording on page)
-      const hasOtpWording = /one[\s-]?time[\s-]?password|enter\s+(?:the\s+)?otp|sms\s+otp|otp\s+sent|verification\s+code/i.test(bodyText);
-      if (hasOtpWording) {
-        for (const sel of Selectors.CHALLENGES.OTP_PATTERNS) {
-          const el = doc.querySelector(sel);
-          if (el && (el.offsetParent !== null || el.offsetWidth > 0)) {
-            return { isChallenge: true, type: 'OTP' };
-          }
         }
       }
 
@@ -427,6 +419,7 @@
     isInputInteractable(el) {
       if (!el) return false;
       if (el.disabled || el.readOnly) return false;
+      if (el.type === 'hidden') return false;
       return true;
     },
 

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ContinueO Auto Login",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Automated two-step login extension for ContinueO parent portal (BMSIT&M) on Windows desktop.",
   "icons": {
     "16": "icons/icon16.png",
