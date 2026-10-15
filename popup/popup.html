@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContinueO Auto Login</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-row">
+        <img src="../icons/icon48.png" alt="Logo" class="logo-icon">
+        <div class="title-group">
+          <h1 class="title">ContinueO</h1>
+          <span class="subtitle">Auto Login</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Status Card -->
+    <section class="status-card">
+      <div class="status-header">
+        <span class="status-label">Status</span>
+        <span id="status-badge" class="badge badge-warning">Checking…</span>
+      </div>
+      <div id="credential-preview" class="credential-preview">
+        Setup required to enable automatic login.
+      </div>
+    </section>
+
+    <!-- PIN Unlock Section (Shown only if encrypted with PIN) -->
+    <section id="pin-section" class="pin-section" style="display: none;">
+      <label for="login-pin" class="input-label">Enter PIN to Unlock:</label>
+      <div class="pin-input-group">
+        <input type="password" id="login-pin" class="form-input pin-input" maxlength="12" placeholder="Security PIN">
+      </div>
+      <div id="pin-error" class="error-text" style="display: none;"></div>
+    </section>
+
+    <!-- Action Buttons -->
+    <div class="button-group">
+      <button id="btn-login-now" class="btn btn-primary" disabled>
+        <span class="btn-icon">⚡</span>
+        <span class="btn-text">LOGIN NOW</span>
+      </button>
+
+      <button id="btn-settings" class="btn btn-secondary">
+        <span class="btn-icon">⚙</span>
+        <span class="btn-text">Settings</span>
+      </button>
+    </div>
+
+    <!-- Live Status / Message Feedback -->
+    <div id="status-feedback" class="status-feedback" style="display: none;">
+      <span id="feedback-icon" class="feedback-icon">●</span>
+      <span id="feedback-text" class="feedback-text"></span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="portal-link">student.bmsit.ac.in</span>
+      <span class="security-tag">Local Storage Only</span>
+    </footer>
+  </div>
+
+  <script src="../common/constants.js"></script>
+  <script src="../common/crypto.js"></script>
+  <script src="../common/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

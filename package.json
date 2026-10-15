@@ -1,0 +1,20 @@
+{
+  "name": "continueo-auto-login-desktop",
+  "version": "1.0.0",
+  "description": "ContinueO Auto Login Chromium extension for Windows desktop",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node tests/run-tests.js"
+  },
+  "keywords": [
+    "continueo",
+    "bmsit",
+    "auto-login",
+    "extension",
+    "chrome",
+    "brave",
+    "edge"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,535 @@
+
+
+
+
+
+
+
+<html lang="en">
+	 <head>
+   <title>Contineo - Bringing Happiness to work and study places!</title>
+     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="robots" content="index, follow" />
+  <meta name="keywords" content="contineo, Contineo" />
+  <meta name="description" content="contineo" />
+  <meta name="generator" content="" />
+  <title>Add Teacher</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <!-- <link rel="shortcut icon" href="templates/contineoReg/img/logo.png" type="image/x-icon"/> -->
+    <link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/uikit.css" />
+    <link rel="shortcut icon" href="images/logosmall.png" type="image/x-icon"/>
+     <link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/uikit.min.css" />
+    <link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="templates/contineoReg/assets/js/uikit.min.js"></script>
+    <script src="templates/contineoReg/assets/js/uikit-icons.min.js"></script>
+      
+    <link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/billboard.css" />
+    <link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/billboard.min.css" />
+    <link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/insight.min.css" />
+    <link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/insight.css" />
+    <script src="templates/contineoReg/assets/js/billboard.js"></script>
+    <script src="templates/contineoReg/assets/js/billboard.pkgd.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+      rel = "stylesheet">
+    
+	</head>
+<script type="text/javascript">
+document.addEventListener('contextmenu', e => e.preventDefault(), false);
+document.addEventListener('keydown', e => {
+    if (e.key === "F12" || (e.ctrlKey || e.metaKey) && (e.key === "U" || e.shiftKey && (e.key === "I" || e.key === "C")))
+        e.preventDefault();
+}, false);
+</script>
+
+<style type="text/css">
+body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+</style>
+
+
+<body id="">
+<form action="index.php" method="POST" name="log">
+
+<input type="hidden" name="option" value="com_user">
+
+<input type="hidden" name="task" value="logout">
+
+<input type="hidden" name="return" value="èw^╞ÿi">
+
+</form>
+<!-- captcha-setup.php -->
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback" async defer></script>
+<script>
+var onloadCallback = function() {
+    grecaptcha.execute();
+};
+
+function setResponse(response) {
+    document.getElementById('captcha-response').value = response;
+}
+</script>
+
+<style>
+::-webkit-input-placeholder, ::-moz-placeholder, ::-ms-placeholder, ::placeholder {
+    color:#333;
+}
+
+::-webkit-input-placeholder {
+    color:#333;
+}
+
+::-moz-placeholder {
+    color:#333;
+}
+
+::-ms-placeholder {
+    color:#333;
+}
+
+::placeholder {
+    color:#333;
+}
+
+  </style>    
+
+    <script type="text/javascript">
+function closeMe(){
+  document.getElementById('atPopup').style.display="none";
+  document.getElementById('blackOverlay').style.display="none";
+}
+function popUp(date){
+  var due = date;
+  var split = due.split('|||');
+  document.getElementById('due').innerHTML = split[0];
+  document.getElementById('due2').innerHTML = split[1];
+  document.getElementById('atPopup').style.display="block";
+  document.getElementById('blackOverlay').style.display="block";
+}
+function check()
+{
+/*var dd = document.getElementById('dd').value;
+var mm = document.getElementById('mm').value;
+var yyyy = document.getElementById('yyyy').value;
+var dobs = yyyy+'-'+mm+'-'+dd;*/
+
+
+var dd = document.getElementById('dd').value;
+var mm = document.getElementById('mm').value;
+var yyyy = document.getElementById('yyyy').value;
+var dobs = yyyy+'-'+mm+'-'+dd;
+
+document.getElementById('passwd').value = dobs.trim();
+
+/* commented fo MID : 0144589 
+var currentdate = document.getElementById('password').value;
+var randsting = '';
+for(i=0;i<currentdate.length;i++)
+{
+randsting += currentdate.charAt(i)+randomstring(2);
+}
+var encodedString = btoa(randsting);
+document.getElementById('passwd').value = currentdate;//encodedString;
+document.getElementById('password').value = currentdate;// encodedString;
+
+END commented fo MID : 0144589  
+*/
+return true;
+}
+
+function putdate()
+    {
+      console.log("here");
+      var dd = document.getElementById('dd').value;
+      var mm = document.getElementById('mm').value;
+      var yyyy = document.getElementById('yyyy').value;
+      var dobs = yyyy+'-'+mm+'-'+dd;
+      
+      document.getElementById('passwd').value = dobs.trim();
+      
+    }
+
+
+function randomstring(L){
+    var s= '';
+    var randomchar=function(){
+      var n= Math.floor(Math.random()*62);
+      if(n<10) return n; //1-10
+      if(n<36) return String.fromCharCode(n+55); //A-Z
+      return String.fromCharCode(n+61); //a-z
+    }
+    while(s.length< L) s+= randomchar();
+    return s;
+}
+
+
+
+</script>
+<style>
+  footer{
+    max-width:100%;
+    margin:0px 0px !important;
+  }
+
+/* .cn-landing-login1 {
+    color: #152f5a !important;
+} */
+
+  </style>
+
+    <style>
+ 
+  footer{
+    max-width:100%;
+    margin:0px 0px !important;
+  }
+
+  .rc-anchor{
+    color: #152f5a !important;
+}
+  </style>
+
+    <style>
+
+/* The Modal (background) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    /* padding-top: 100px; */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.7);
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0px;
+    border: 1px solid #888;
+    width: 50%;
+    position: relative;
+    top: 33%;
+}
+.modal-content h3{
+  text-align: center;
+    font-size: 24px;
+    font-weight:600;
+    margin-bottom: 0px;
+    color: #e91a1a !important;
+    /* padding:10px 10px; */
+    
+}
+.modal-content .uk-clearfix{
+  padding:10px 10px;
+  background-color:#ffe0e1;
+}
+.modal-content p{
+  margin-bottom:10px;
+  margin-top:0px;
+}
+/* The Close Button */
+.close {
+    color: #393939;
+    float: right;
+    font-size: 38px;
+    font-weight: bold;
+    line-height: 23px;
+}
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.cn-mob-view{
+  display:none;
+}
+@media(max-width:767px){
+  .cn-logo{
+    display:none;
+  }
+  .cn-landing{
+    flex-direction: column-reverse;
+  }
+  .cn-mar-remove{
+    margin:0px 0px !important;
+  }
+  .cn-mob-view{
+    display:inline-flex;
+    margin-bottom:30px;
+    margin-left:14px;
+  }
+  .cn-mob-view .cn-clgname a{
+color:#333;
+  }
+  .cn-mob-view .cn-clgname small{
+color:#333;
+  }
+  .cn-clgname a{
+    color:#fff;
+    font-size:22px;
+  }
+  .cn-clgname small{
+    color:#bab8b8;
+    font-size:14px !important;
+  }
+}
+</style>
+<link rel="stylesheet" href="templates/contineoReg/assets/src/scss/css/error-modal.css" />
+<script src="https://www.google.com/recaptcha/api.js?render=6Ld8jtIqAAAAALP55HLtgibxOd393Rp5XD92Vzgh"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    grecaptcha.ready(function () {
+        grecaptcha.execute('6Ld8jtIqAAAAALP55HLtgibxOd393Rp5XD92Vzgh', { action: 'result_form' }).then(function (token) {
+            let tokenInput = document.getElementById('recaptcha-token');
+            if (tokenInput) {
+                tokenInput.value = token;
+            }
+        });
+    });
+});
+</script>
+<div class="cn-landing uk-grid uk-grid uk-grid-collapse" uk-grid="" uk-height-match="target: > div > .uk-card">
+      <div class="uk-width-3-5@l uk-width-3-5@m uk-width-1-2@s">
+        <div class="uk-card uk-card-default uk-card-body cn-bgpart1">
+
+          <div class="cn-logo cn-web-logo">
+            <a href="#!" rel="home">
+              <div class="cn-logo-image cn-big-logo">
+                <img src="images/logonew.png" alt="logo" width="70%">
+              </div>
+            </a>
+            <!-- <div class="cn-landinglogo-text cn-landing-logo">
+              <a class="cn-heading" href="#!" rel="home">BMS Institute of Technology & Management</a>
+              <small class="uk-flex" style="font-size:16px; padding-left:14px;">Doddaballapur Main Road, Avalahalli, Yelahanka, Bengaluru, Karnataka 560064</small>
+            </div> -->
+          </div>
+          <div class="cn-welcome">
+            <article class="uk-article">
+            <h2 class="uk-article-title"><a class="" href="">Welcome to BMSIT&M.</a></h2>
+          <p>BMSIT&M is established in 2002 by BMS Educational Trust, at Yelahanka, Bengaluru.
+The campus is located in a lush green 21 acre campus with enriching academic ambience</p>
+              
+            </article>
+            <div class="uk-width-1-1 uk-first-column">
+              <div class="uk-card uk-card-default uk-card-body cn-cal-events">
+                <div class="uk-clearfix">
+                  <div class="uk-float-left">
+                    <div class="uk-card">
+                      <a href="#!">
+                        <h3>Notice Board</h3>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="uk-panel uk-panel-scrollable cn-events">
+                <ul class="uk-list">
+                  <li style="font-size:16px;"><span class="uk-margin-small-right" uk-icon="icon: info"></span>Welcome to the preview of the new mobile friendly parent portal</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="cn-absolute"> Copyright ┬⌐ Powered By <a href="http://www.contineo.in/" target="_blanks">Contineo</a></div> -->
+        </div>
+      </div>
+      
+      
+          
+
+      <div class="uk-width-2-5@l uk-width-2-5@m uk-width-1-2@s cn-pad-left0">
+        <div class="uk-card uk-card-default uk-card-body cn-bgpart2">
+           <form id="login-form" action="index.php" method="post"  >
+        <div class="cn-logo cn-mobile-logo">
+            <a href="#!" rel="home">
+              <div class="cn-logo-image cn-big-logo">
+                <img src="images/logonew.png" alt="logo" width="">
+              </div>
+            </a>
+          </div>
+          
+         
+
+
+          <div class="uk-vertical-align-middle cn-form-box">
+          
+            <h3>Login to Your Account</h3>
+            <form class="cn-landing-login">
+              <div class="uk-margin">
+                <div class="uk-inline uk-width-1-1">
+                <label class="clr1"> Username </label> 
+                  <span class="uk-form-icon" uk-icon="icon: mail"></span>
+                  <input class="uk-input " type="text" required AUTOCOMPLETE="off" name="username" id="username"  placeholder="USN">
+                </div>
+              </div>
+
+              <div class="uk-margin">
+                    <div class="uk-inline uk-width-1-1">
+                      <label class="clr1">Password</label>
+                        <div class="uk-flex">  
+                        <!-- DOB password start -->
+                          <select name="dd" class="validate[required] inputselectday uk-select" id="dd"  required="">
+                            <option disabled selected value=''>Day</option>
+                            <option value='01 '>01</option><option value='02 '>02</option><option value='03 '>03</option><option value='04 '>04</option><option value='05 '>05</option><option value='06 '>06</option><option value='07 '>07</option><option value='08 '>08</option><option value='09 '>09</option><option value='10 '>10</option><option value='11 '>11</option><option value='12 '>12</option><option value='13 '>13</option><option value='14 '>14</option><option value='15 '>15</option><option value='16 '>16</option><option value='17 '>17</option><option value='18 '>18</option><option value='19 '>19</option><option value='20 '>20</option><option value='21 '>21</option><option value='22 '>22</option><option value='23 '>23</option><option value='24 '>24</option><option value='25 '>25</option><option value='26 '>26</option><option value='27 '>27</option><option value='28 '>28</option><option value='29 '>29</option><option value='30 '>30</option><option value='31 '>31</option>                          </select>
+          
+                          <select name="mm" class="validate[required] inputselectmon uk-select" id="mm"  required="">
+                            <option disabled selected value=''>Month</option>
+                            <option value='01'>Jan</option><option value='02'>Feb</option><option value='03'>Mar</option><option value='04'>Apr</option><option value='05'>May</option><option value='06'>Jun</option><option value='07'>Jul</option><option value='08'>Aug</option><option value='09'>Sep</option><option value='10'>Oct</option><option value='11'>Nov</option><option value='12'>Dec</option>                          </select>
+          
+                          <select name="yyyy" class="validate[required] inputselectyear uk-select" id="yyyy"  required="" onchange="putdate()" >
+                            <option disabled selected value=''> Year </option>
+                                                        
+                                <option value='1955'>1955</option>                            
+                                <option value='1956'>1956</option>                            
+                                <option value='1957'>1957</option>                            
+                                <option value='1958'>1958</option>                            
+                                <option value='1959'>1959</option>                            
+                                <option value='1960'>1960</option>                            
+                                <option value='1961'>1961</option>                            
+                                <option value='1962'>1962</option>                            
+                                <option value='1963'>1963</option>                            
+                                <option value='1964'>1964</option>                            
+                                <option value='1965'>1965</option>                            
+                                <option value='1966'>1966</option>                            
+                                <option value='1967'>1967</option>                            
+                                <option value='1968'>1968</option>                            
+                                <option value='1969'>1969</option>                            
+                                <option value='1970'>1970</option>                            
+                                <option value='1971'>1971</option>                            
+                                <option value='1972'>1972</option>                            
+                                <option value='1973'>1973</option>                            
+                                <option value='1974'>1974</option>                            
+                                <option value='1975'>1975</option>                            
+                                <option value='1976'>1976</option>                            
+                                <option value='1977'>1977</option>                            
+                                <option value='1978'>1978</option>                            
+                                <option value='1979'>1979</option>                            
+                                <option value='1980'>1980</option>                            
+                                <option value='1981'>1981</option>                            
+                                <option value='1982'>1982</option>                            
+                                <option value='1983'>1983</option>                            
+                                <option value='1984'>1984</option>                            
+                                <option value='1985'>1985</option>                            
+                                <option value='1986'>1986</option>                            
+                                <option value='1987'>1987</option>                            
+                                <option value='1988'>1988</option>                            
+                                <option value='1989'>1989</option>                            
+                                <option value='1990'>1990</option>                            
+                                <option value='1991'>1991</option>                            
+                                <option value='1992'>1992</option>                            
+                                <option value='1993'>1993</option>                            
+                                <option value='1994'>1994</option>                            
+                                <option value='1995'>1995</option>                            
+                                <option value='1996'>1996</option>                            
+                                <option value='1997'>1997</option>                            
+                                <option value='1998'>1998</option>                            
+                                <option value='1999'>1999</option>                            
+                                <option value='2000'>2000</option>                            
+                                <option value='2001'>2001</option>                            
+                                <option value='2002'>2002</option>                            
+                                <option value='2003'>2003</option>                            
+                                <option value='2004'>2004</option>                            
+                                <option value='2005'>2005</option>                            
+                                <option value='2006'>2006</option>                            
+                                <option value='2007'>2007</option>                            
+                                <option value='2008'>2008</option>                            
+                                <option value='2009'>2009</option>                            
+                                <option value='2010'>2010</option>                            
+                                <option value='2011'>2011</option>                            
+                                <option value='2012'>2012</option>                            
+                                <option value='2013'>2013</option>                            
+                                <option value='2014'>2014</option>                            
+                                <option value='2015'>2015</option>                            
+                                <option value='2016'>2016</option>                            
+                                <option value='2017'>2017</option>                            
+                                <option value='2018'>2018</option>                            
+                                <option value='2019'>2019</option>                            
+                                <option value='2020'>2020</option>                            
+                                <option value='2021'>2021</option>                            
+                                <option value='2022'>2022</option>                            
+                                <option value='2023'>2023</option>                            
+                                <option value='2024'>2024</option>                            
+                                <option value='2025'>2025</option>                            
+                                <option value='2026'>2026</option>                          </select> 
+                    </div> 
+                  </div>
+                </div>
+                
+                
+              <!-- end added by kasheem -->
+
+
+              <div class="uk-margin ">
+              <div class="uk-clearfix uk-flex uk-flex-middle">
+<div class="uk-float-left">
+<a class=" uk-link  cn-forgot-pwd" href="index.php?option=com_user&task=forgot">Forgot Password?</a>                
+</div>
+<div class="uk-float-right" style="margin-left:auto;">
+
+              <input type="submit" class="uk-button cn-login-btn cn-submit1 cn-landing-login1" style="width:100%;" value="Login"  onClick="return check()"  >
+              <input type="hidden"  id="passwd" name="passwd" AUTOCOMPLETE="off" readonly >     
+              <input type="hidden" name="option" value="com_user" readonly >
+              <!-- <input type="hidden" name="task" value="login" readonly > -->
+              <input type="hidden" name="task" value="loginOtp" readonly >
+              <input type="hidden" name="return" value="èw^╞ÿi" readonly >
+              <input type="hidden" name="return" value="" readonly />
+            <input type="hidden" name="129940deb96496ee3f7f45b2ba2eb56a" value="1" />               <!-- <a class="uk-float-right uk-link uk-link-muted cn-forgot-pwd" href="#">Forgot Password?</a> -->
+
+               </div>
+        </div>
+            
+              </div>
+              </div> 
+          
+            <div class="uk-margin" style="">
+                <div class="uk-inline uk-width-1-1">
+                 <input type="hidden" name="token" id="recaptcha-token">
+            <input type="hidden" name="action" value="result_form">
+<!-- secretkey:6LcXv5kqAAAAABz8E8LAid2v6UE0iXwot-otwKRg -->
+<!-- 6LcXv5kqAAAAAGya1bf8z3sKukOTVCCbJM2B-H1R -->
+<!-- 6Ld8jtIqAAAAACu7yai_AORky06ei6RxcdRqo2aX -->
+
+                </div>
+              </div>
+             </form>
+        </div>
+      </div>
+      </div>
+    </div>
+    
+    <footer>
+      <div class="uk-clearfix cn-footer-text">
+        <div class="uk-float-left">
+          <p class="uk-text-left">
+            Copyright ┬⌐ Powered By <a href="http://www.contineo.in/" target="_blanks">Contineo</a>
+          </p>
+        </div>
+        <div class="uk-float-right">
+          <p class="uk-text-right terms"><a href="#!">Terms of Service</a> | <a href="#!">Privacy Policy</a></p>
+        </div>
+      </div>
+    </footer>
+
+</body>
+      
+
+
+</html>
+
+  

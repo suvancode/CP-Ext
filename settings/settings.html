@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContinueO Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-page">
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <img src="../icons/icon48.png" alt="Logo" class="logo">
+          <div>
+            <h1>ContinueO Auto Login</h1>
+            <p class="subtitle">BMSIT&M Parent Portal Desktop Automation Configuration</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Alert Banner -->
+      <div id="alert-banner" class="alert-banner" style="display: none;">
+        <span id="alert-icon" class="alert-icon">●</span>
+        <span id="alert-message" class="alert-message"></span>
+      </div>
+
+      <!-- Current Status Card -->
+      <div id="status-card" class="card status-card">
+        <div class="card-header">
+          <h2 class="card-title">Credential Status</h2>
+          <span id="status-pill" class="pill pill-warning">Setup Required</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Active Configuration:</span>
+            <span id="masked-summary" class="info-value font-mono">No credentials configured</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">At-Rest Protection:</span>
+            <span id="protection-status" class="info-value">Standard Browser Storage</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Credential Form Card -->
+      <form id="credentials-form" class="card">
+        <div class="card-header">
+          <h2 class="card-title">Portal Credentials</h2>
+          <span class="card-badge">Two-Step Verification</span>
+        </div>
+
+        <div class="card-body form-grid">
+          <!-- USN Field -->
+          <div class="form-group full-width">
+            <label for="usn" class="form-label">
+              University Seat Number (USN) <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="usn"
+              name="usn"
+              class="form-control font-mono"
+              placeholder="e.g. 1BY21CS001"
+              autocomplete="off"
+              required
+            >
+            <span class="form-hint">Used for Step 1 login at student.bmsit.ac.in</span>
+          </div>
+
+          <!-- Date of Birth Fields -->
+          <div class="form-group full-width">
+            <label class="form-label">
+              Date of Birth (DOB) <span class="required">*</span>
+            </label>
+            <div class="dob-grid">
+              <div>
+                <label for="dob-day" class="sub-label">Day</label>
+                <select id="dob-day" name="dobDay" class="form-control" required>
+                  <option value="" disabled selected>Day</option>
+                  <!-- 01 to 31 populated dynamically -->
+                </select>
+              </div>
+
+              <div>
+                <label for="dob-month" class="sub-label">Month</label>
+                <select id="dob-month" name="dobMonth" class="form-control" required>
+                  <option value="" disabled selected>Month</option>
+                  <option value="01">01 - Jan</option>
+                  <option value="02">02 - Feb</option>
+                  <option value="03">03 - Mar</option>
+                  <option value="04">04 - Apr</option>
+                  <option value="05">05 - May</option>
+                  <option value="06">06 - Jun</option>
+                  <option value="07">07 - Jul</option>
+                  <option value="08">08 - Aug</option>
+                  <option value="09">09 - Sep</option>
+                  <option value="10">10 - Oct</option>
+                  <option value="11">11 - Nov</option>
+                  <option value="12">12 - Dec</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="dob-year" class="sub-label">Year</label>
+                <select id="dob-year" name="dobYear" class="form-control" required>
+                  <option value="" disabled selected>Year</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+            <span class="form-hint">Matches ContinueO portal date selection format</span>
+          </div>
+
+          <!-- ID Card Number -->
+          <div class="form-group full-width">
+            <label for="id-card" class="form-label">
+              College ID Card Number <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="id-card"
+              name="idCardNumber"
+              class="form-control font-mono"
+              placeholder="e.g. ID number printed on your college smart card"
+              autocomplete="off"
+              required
+            >
+            <span class="form-hint">Used for Step 2 ID Card verification</span>
+          </div>
+
+          <!-- Optional Encryption PIN Card Section -->
+          <div class="form-group full-width security-box">
+            <div class="checkbox-row">
+              <input type="checkbox" id="enable-encryption" class="form-checkbox">
+              <label for="enable-encryption" class="checkbox-label">
+                <strong>Protect with Master PIN (AES-256-GCM Web Crypto)</strong>
+              </label>
+            </div>
+            <p class="security-explanation">
+              When checked, your credentials are encrypted at rest with a key derived from your PIN (PBKDF2 SHA-256, 100k rounds) before saving to local browser storage.
+            </p>
+
+            <div id="pin-inputs" class="pin-inputs-grid" style="display: none;">
+              <div>
+                <label for="pin" class="sub-label">Master PIN</label>
+                <input type="password" id="pin" class="form-control font-mono" maxlength="16" placeholder="4-16 digit PIN">
+              </div>
+              <div>
+                <label for="pin-confirm" class="sub-label">Confirm PIN</label>
+                <input type="password" id="pin-confirm" class="form-control font-mono" maxlength="16" placeholder="Confirm PIN">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="card-footer">
+          <div class="action-buttons-left">
+            <button type="submit" id="btn-save" class="btn btn-primary">
+              💾 Save Credentials
+            </button>
+            <button type="button" id="btn-edit" class="btn btn-outline" style="display: none;">
+              ✏ Edit Credentials
+            </button>
+          </div>
+          <div class="action-buttons-right">
+            <button type="button" id="btn-clear" class="btn btn-danger" style="display: none;">
+              🗑 Clear Credentials
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Security Notice Footer -->
+      <footer class="security-notice card">
+        <h3 class="notice-title">🔒 Privacy & Local Storage Assurance</h3>
+        <ul class="notice-list">
+          <li><strong>Zero Remote Transmission:</strong> Your credentials are stored strictly on this computer and never transmitted to any external server or cloud database.</li>
+          <li><strong>Domain Scoped:</strong> Automation executes exclusively on <code>https://student.bmsit.ac.in/*</code>.</li>
+          <li><strong>Storage Architecture:</strong> Uses Chromium <code>chrome.storage.local</code>, sandboxed within your local browser profile.</li>
+        </ul>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../common/constants.js"></script>
+  <script src="../common/crypto.js"></script>
+  <script src="../common/storage.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>
