@@ -1,8 +1,13 @@
-# ContinueO Auto Login for Windows Desktop
+# ContinueO Auto Login for Windows Desktop (v1.0.2)
 
 A secure, high-reliability Chromium browser extension built with **Manifest V3** that automates the authorized two-step authentication flow for the **BMSIT&M ContinueO Parent Portal** (`https://student.bmsit.ac.in/parents/index.php`) on desktop computers.
 
 Compatible with **Google Chrome**, **Brave Browser**, and **Microsoft Edge** on Windows.
+
+[![GitHub Release](https://img.shields.io/github/v/release/adityasing9/CP-Ext?color=2563eb&label=Latest%20Release)](https://github.com/adityasing9/CP-Ext/releases/latest)
+[![Tests Passing](https://img.shields.io/badge/tests-passing-10b981)](https://github.com/adityasing9/CP-Ext)
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-1e3c72)](https://developer.chrome.com/docs/extensions/mv3/intro/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
@@ -12,12 +17,15 @@ Compatible with **Google Chrome**, **Brave Browser**, and **Microsoft Edge** on 
 2. [Portal Authentication Flow](#portal-authentication-flow)
 3. [Architecture & Components](#architecture--components)
 4. [Installation Guide (Windows)](#installation-guide-windows)
+   - [Method 1: Load Unpacked from Source](#method-1-load-unpacked-from-source-recommended-for-developers)
+   - [Method 2: Install from Release ZIP](#method-2-install-from-release-zip)
 5. [First-Time Setup & Configuration](#first-time-setup--configuration)
 6. [Security & Credential Storage Strategy](#security--credential-storage-strategy)
 7. [State Machine Architecture](#state-machine-architecture)
 8. [Permissions Scope](#permissions-scope)
 9. [Automated Unit Testing & Verification](#automated-unit-testing--verification)
 10. [Testing & Quality Assurance Checklist](#testing--quality-assurance-checklist)
+11. [Release History](#release-history)
 
 ---
 
@@ -27,121 +35,134 @@ The **ContinueO Auto Login** desktop extension extends the existing ContinueO ec
 
 ### Key Highlights
 - **100% Client-Side:** No cloud databases, no backend servers, zero telemetry or tracking.
-- **Strictly Scoped:** Automation executes only on `https://student.bmsit.ac.in/*`.
-- **Smart Tab Management:** Focuses and reuses existing ContinueO tabs to prevent tab clutter.
-- **Deterministic DOM Interaction:** Handles portal quirks (such as trailing whitespace in date option values and hidden password field synchronization).
-- **At-Rest Protection:** Supports optional **AES-256-GCM** encryption using standard Web Crypto API with PBKDF2 key derivation.
-- **Safety & Compliance:** Never bypasses CAPTCHA, OTP, MFA, or security challenges; pauses safely for manual user completion.
+- **Strictly Scoped:** Automation executes exclusively on `https://student.bmsit.ac.in/*`.
+- **Smart Tab Management:** Automatically focuses and reuses an existing open ContinueO tab rather than opening duplicate tabs.
+- **Deterministic DOM Interaction:** Handles portal quirks (trailing whitespace in date option values, hidden password field synchronization, and ID card fields).
+- **At-Rest Protection:** Supports optional **AES-256-GCM** encryption using the standard Web Crypto API with PBKDF2 key derivation.
+- **Safety & Compliance:** Never attempts to bypass CAPTCHA, MFA, or security checks; pauses safely for manual user completion.
 
 ---
 
 ## Portal Authentication Flow
 
-The ContinueO portal enforces a strict two-step authentication sequence:
+The ContinueO portal enforces a two-step authentication sequence:
 
 ```
-┌─────────────────────────────────┐
-│ Page 1: Initial Login           │
-│  - USN Input (#username)        │
-│  - Day Selector (#dd)           │
-│  - Month Selector (#mm)         │
-│  - Year Selector (#yyyy)        │
-│  - [ Login Button ]             │
-└───────────────┬─────────────────┘
-                │
-                ▼
-┌─────────────────────────────────┐
-│ Page 2: Verification            │
-│  - ID Card Number (#idcard)     │
-│  - [ Submit Button ]            │
-└───────────────┬─────────────────┘
-                │
-                ▼
-┌─────────────────────────────────┐
-│ Authenticated ContinueO Portal  │
-│  - Student Dashboard            │
-│  - Attendance & Academic Data   │
-└─────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│ Page 1: Initial Login                        │
+│  - USN Input (#username)                     │
+│  - Day Selector (#dd) [Values: '01 ' - '31 ']│
+│  - Month Selector (#mm)                      │
+│  - Year Selector (#yyyy)                     │
+│  - Hidden Password Sync (#passwd)            │
+│  - [ Login Button ]                          │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│ Page 2: ID Card Number Verification          │
+│  - Heading: "Enter the ID Card Number"       │
+│  - Input Field (name="otp" / id="otp" / card)│
+│  - [ SUBMIT Button ]                         │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│ Authenticated ContinueO Portal               │
+│  - Student Dashboard                         │
+│  - Attendance & Academic Data                │
+└──────────────────────────────────────────────┘
 ```
 
-### Critical DOM Nuances
-1. **Day Selector Trailing Space:** The portal's `<select name="dd" id="dd">` uses option values with a trailing space (e.g., `'01 '`, `'15 '`). The extension's adapter formats day selections to match this exact value structure.
-2. **Hidden Password Field (`#passwd`):** The portal requires a hidden field `#passwd` in `YYYY-MM-DD` format. The extension invokes the portal's native `putdate()` function and explicitly updates `#passwd` as a fail-safe.
-3. **Form Submission Validation:** The extension triggers the portal's native `check()` validator to ensure complete parity with manual user interactions.
+### Critical DOM Nuances & Engineering Solutions
+
+1. **Day Selector Trailing Space:**
+   - The portal's `<select name="dd" id="dd">` uses option values with a trailing whitespace (e.g., `'01 '`, `'15 '`).
+   - The extension's adapter automatically appends the trailing space suffix to match the exact option values.
+2. **Hidden Password Field (`#passwd`):**
+   - The portal requires a hidden field `#passwd` in `YYYY-MM-DD` format.
+   - The extension calls the portal's native `putdate()` function and explicitly updates `#passwd` as a fail-safe.
+3. **Form Submission Validation:**
+   - Triggers the portal's native `check()` validator to maintain complete parity with manual user interactions.
+4. **Page 2 ID Card Input (`name="otp"`):**
+   - ContinueO's backend uses a Joomla task called `loginOtp` for Page 2, causing the ID Card input element to be named `name="otp"` or `id="otp"`.
+   - The extension prioritizes ID card detection based on page heading indicators (`Enter the ID Card Number`) and maps `name="otp"` directly to the ID Card Number field, preventing false-positive security challenge flags.
 
 ---
 
 ## Architecture & Components
 
-The desktop extension is organized as an unbundled, modular project:
+The desktop extension is structured as a clean, modular Manifest V3 extension:
 
 ```
 CP-Ext/
-├── manifest.json              # Manifest V3 extension configuration
-├── package.json               # Test script and module metadata
-├── icons/                     # Vector SVG and 16x16, 48x48, 128x128 PNG icons
+├── manifest.json              # Manifest V3 extension configuration (v1.0.2)
+├── package.json               # Test script and local CommonJS metadata
+├── icons/                     # Extension assets (16x16, 48x48, 128x128 PNG & SVG)
 │   ├── icon16.png
 │   ├── icon48.png
 │   ├── icon128.png
 │   └── icon.svg
 ├── common/
-│   ├── constants.js           # Shared URLs, states, actions, timeouts
-│   ├── crypto.js              # Web Crypto AES-256-GCM & PBKDF2 engine
+│   ├── constants.js           # Shared URLs, 10-state machine, actions, timeouts
+│   ├── crypto.js              # Web Crypto AES-256-GCM + PBKDF2 (100,000 rounds)
 │   └── storage.js             # chrome.storage.local wrapper, validation, masking
 ├── popup/
-│   ├── popup.html             # Minimal popup interface (Status, [LOGIN NOW], [Settings])
+│   ├── popup.html             # Minimal UI: Status badge, [LOGIN NOW], [Settings]
 │   ├── popup.css              # Responsive styling matching ContinueO theme
-│   └── popup.js               # Popup interactions and tab launch triggers
+│   └── popup.js               # Tab reuse, tab launch triggers, PIN unlock
 ├── settings/
-│   ├── settings.html          # Setup screen: USN, DOB, ID Card, Master PIN
+│   ├── settings.html          # Setup screen: USN, DOB, ID Card, Master PIN toggle
 │   ├── settings.css           # Accessible, modern configuration form styles
-│   └── settings.js            # Form validation, save/edit/clear actions
+│   └── settings.js            # Input validation, save/edit/clear actions
 ├── background/
-│   └── service-worker.js      # Tab reuse, tab creation, and message routing
+│   └── service-worker.js      # Tab reuse, tab focusing, and message routing
 ├── content/
-│   ├── contineo-selectors.js  # Verified DOM selectors for ContinueO
+│   ├── contineo-selectors.js  # Production DOM selectors for ContinueO
 │   ├── contineo-adapter.js    # DOM interaction, filling, and page detection
-│   ├── overlay.js             # Floating in-page status HUD
-│   └── content.js             # Content script runner & state machine
+│   ├── overlay.js             # Floating in-page status HUD (auto-fades upon login)
+│   └── content.js             # Content script runner & navigation state machine
 └── tests/
     ├── fixtures/              # Real DOM fixtures for Page 1, Page 2, Page 3
     │   ├── portal_page1.html
     │   ├── portal_page2.html
     │   └── portal_page3.html
     ├── mock-dom.js            # Lightweight headless DOM implementation for Node.js
-    ├── crypto.test.js         # Encryption, validation, and storage unit tests
+    ├── crypto.test.js         # Encryption and storage unit tests
     ├── adapter.test.js        # DOM interaction and page detection unit tests
-    └── run-tests.js           # Master test runner
+    └── run-tests.js           # Master test runner (npm test)
 ```
 
 ---
 
 ## Installation Guide (Windows)
 
-You can load the unpacked extension in any Chromium-based desktop browser on Windows.
+The extension is compatible with **Google Chrome**, **Brave Browser**, and **Microsoft Edge** on Windows. Personal use does not require publishing to the Chrome Web Store.
 
-### Google Chrome
-1. Open Google Chrome.
-2. Navigate to `chrome://extensions` in the address bar.
-3. In the top-right corner, toggle **Developer mode** to **ON**.
-4. Click the **Load unpacked** button in the top-left toolbar.
-5. In the file picker, select the extension directory:
+### Method 1: Load Unpacked from Source (Recommended for Developers)
+
+1. Clone or download this repository:
+   ```powershell
+   git clone https://github.com/adityasing9/CP-Ext.git
    ```
-   C:\Users\AADI\Desktop\My\CODE\Github\CP-Ext
+2. Open your Chromium browser and navigate to the extensions page:
+   - **Google Chrome:** `chrome://extensions`
+   - **Brave Browser:** `brave://extensions`
+   - **Microsoft Edge:** `edge://extensions`
+3. Toggle **Developer mode** to **ON** (top-right corner in Chrome/Brave, or left sidebar in Edge).
+4. Click the **Load unpacked** button.
+5. In the folder picker, select the extension directory:
    ```
-6. The **ContinueO Auto Login** extension is now installed. Pin it to your toolbar for easy access.
+   c:\Users\AADI\Desktop\My\CODE\Github\CP-Ext
+   ```
+6. The **ContinueO Auto Login** extension is now installed. Pin it to your browser toolbar for easy access.
 
-### Brave Browser
-1. Open Brave.
-2. Navigate to `brave://extensions`.
-3. Enable **Developer mode** (toggle in the top-right).
-4. Click **Load unpacked** and select `C:\Users\AADI\Desktop\My\CODE\Github\CP-Ext`.
+### Method 2: Install from Release ZIP
 
-### Microsoft Edge
-1. Open Microsoft Edge.
-2. Navigate to `edge://extensions`.
-3. Enable **Developer mode** in the left sidebar.
-4. Click **Load unpacked** and select `C:\Users\AADI\Desktop\My\CODE\Github\CP-Ext`.
+1. Download the latest release asset from [GitHub Releases](https://github.com/adityasing9/CP-Ext/releases/latest):
+   - [`continueo-auto-login-v1.0.2.zip`](https://github.com/adityasing9/CP-Ext/releases/download/v1.0.2/continueo-auto-login-v1.0.2.zip)
+2. Extract the ZIP file into a permanent local folder.
+3. Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select the extracted folder.
 
 ---
 
@@ -159,9 +180,9 @@ You can load the unpacked extension in any Chromium-based desktop browser on Win
    - **USN:** e.g., `1BY21CS001`
    - **Date of Birth:** Select your Day (01–31), Month (Jan–Dec), and Year (1955–2026).
    - **College ID Card Number:** e.g., smart card ID number.
-5. *(Optional)* Check **Protect with Master PIN (AES-256-GCM)** to encrypt your credentials at rest with a custom PIN.
+5. *(Optional)* Check **Protect with Master PIN (AES-256-GCM)** to encrypt credentials at rest with a custom PIN.
 6. Click **Save Credentials**.
-7. Your credentials are now safely saved in local storage.
+7. Return to the popup and click **LOGIN NOW** to log in automatically.
 
 ---
 
@@ -172,7 +193,7 @@ You can load the unpacked extension in any Chromium-based desktop browser on Win
 - Credentials never leave your local computer.
 - Network requests are restricted strictly to ContinueO portal navigation.
 
-### Storage Modes & At-Rest Protection
+### Storage Modes & Protection Strategy
 
 #### 1. Standard Browser Profile Storage (Default)
 - Stored locally via `chrome.storage.local`.
@@ -187,20 +208,20 @@ You can load the unpacked extension in any Chromium-based desktop browser on Win
   - **At Rest:** Only the ciphertext, salt, and IV are stored in `chrome.storage.local`. The decryption key exists only ephemerally in memory during login and is never written to disk.
 
 ### Additional Safeguards
-- **Credential Masking:** UI summaries display only masked identifiers (e.g. `1B***01`). Full credentials are never logged to console or included in URLs.
-- **Strict Verification:** All inputs are validated before storage to prevent malformed submissions.
+- **Credential Masking:** UI summaries display only masked identifiers (e.g., `1B***01`). Full credentials are never logged to console or included in URLs.
+- **Strict Validation:** All inputs are validated before storage to prevent malformed submissions.
 
 ---
 
 ## State Machine Architecture
 
-The automation controller implements an explicit state machine:
+The automation controller implements an explicit 10-state machine:
 
 ```
 [ IDLE ]
    │
    ▼ User clicks "LOGIN NOW"
-[ OPENING_PORTAL ] ─────────► (Reuses open tab or opens new tab)
+[ OPENING_PORTAL ] ─────────► (Reuses open tab or opens new tab & focuses window)
    │
    ▼
 [ DETECTING_LOGIN_PAGE ]
@@ -215,7 +236,7 @@ The automation controller implements an explicit state machine:
 [ WAITING_FOR_ID_CARD_PAGE ]
    │
    ▼
-[ FILLING_ID_CARD ] ─────────► (Multi-tier resolution & fills ID card number)
+[ FILLING_ID_CARD ] ─────────► (Locates ID card input & fills ID Card Number)
    │
    ▼
 [ SUBMITTING_ID_CARD ] ──────► (Clicks SUBMIT button)
@@ -224,12 +245,12 @@ The automation controller implements an explicit state machine:
 [ VERIFYING_SUCCESS ]
    │
    ▼
-[ COMPLETED ] ───────────────► (HUD shows checkmark & fades; portal is ready)
+[ COMPLETED ] ───────────────► (HUD displays checkmark and self-dismisses)
 ```
 
 ### Resilient Error & Challenge Handling
 - **`ERROR` State:** If invalid credentials, portal errors, or missing fields occur, the state machine halts immediately, displays the error in the HUD, and clears the session flag. It **never** loops or repeatedly submits failed forms.
-- **`MANUAL_INTERVENTION_REQUIRED` State:** If an interactive CAPTCHA puzzle or OTP challenge is detected, the extension pauses automation and invites the user to solve it manually without interfering with the session.
+- **`MANUAL_INTERVENTION_REQUIRED` State:** If an interactive CAPTCHA puzzle (e.g. Google reCAPTCHA image challenge) appears, the extension pauses automation and invites the user to complete it manually.
 
 ---
 
@@ -252,7 +273,7 @@ The extension requests only minimal, necessary permissions:
 The project includes unit and integration tests executing against DOM fixtures derived from the real ContinueO portal.
 
 ### Run Tests
-Open a terminal in `c:\Users\AADI\Desktop\My\CODE\Github\CP-Ext`:
+Open a terminal in the extension directory:
 
 ```powershell
 npm test
@@ -271,10 +292,10 @@ npm test
    - Day selector trailing-space value matching (`"05 "`)
    - Hidden `#passwd` calculation (`YYYY-MM-DD`)
    - Page 1 form submission trigger
-   - Page 2 detection and ID card multi-fallback location
+   - Page 2 detection (with input named `otp` / `idcard`) without false-positive OTP flags
    - Page 2 form submission trigger
    - Authenticated dashboard (Page 3) detection
-   - Error modal and security challenge interception
+   - Error modal and interactive CAPTCHA challenge interception
 
 ---
 
@@ -310,9 +331,22 @@ Use this checklist to verify manual functionality:
   - Enter correct PIN -> Decrypts and logs in smoothly.
   - Enter incorrect PIN -> Shows error without leaking credentials.
 - [x] **Security Challenges:**
-  - If a CAPTCHA or OTP appears, automation pauses safely with `MANUAL_INTERVENTION_REQUIRED`.
+  - If a CAPTCHA appears, automation pauses safely with `MANUAL_INTERVENTION_REQUIRED`.
 - [x] **Portal Error Handling:**
   - If invalid credentials produce an error popup, automation halts safely without looping.
+
+---
+
+## Release History
+
+- **v1.0.2** (Latest):
+  - Removed false OTP security challenge rules so that inputs named `otp` are correctly treated as the ID Card Number field.
+  - Added case-insensitive Page 2 detection.
+  - Added `input[name='otp']` and `input[id='otp']` as top-priority ID card selectors.
+- **v1.0.1**:
+  - Prioritized Page 2 detection before challenge heuristics.
+- **v1.0.0**:
+  - Initial release of ContinueO Auto Login for Windows desktop (Manifest V3).
 
 ---
 
